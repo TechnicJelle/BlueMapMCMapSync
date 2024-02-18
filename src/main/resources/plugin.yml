@@ -1,0 +1,14 @@
+name: BlueMapMCMapSync
+version: '${project.version}'
+main: com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync
+api-version: '1.13'
+
+commands:
+  bmdiscover:
+    usage: /<command>
+    description: Syncs the held Minecraft Map to BlueMap
+    permission: bmdiscover
+
+permissions:
+  bmdiscover:
+    default: true
