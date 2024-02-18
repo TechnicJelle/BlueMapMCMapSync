@@ -6,6 +6,8 @@
 With this Paper plugin installed, your BlueMap will be completely blank to begin with.  
 You can then use `/bmdiscover` with a map in your hand to sync that map with the BlueMap map.
 
+![a screenshot of a Minecraft window where the player is holding two maps, overlaid on the BlueMap that is showing the same area](.github/readme_assets/demo.png)
+
 Once you install this plugin, you probably want to start with a fresh map,
 which you can do by running `/bluemap purge <map-id>` for each map you want to reset.
 
@@ -17,8 +19,6 @@ The config also contains a list of all the discovered areas. I do not recommend 
 but it should prove simple enough to understand, in case you feel the need to mess around with it.
 
 You can reload the configs by reloading BlueMap itself, which is `/bluemap reload`.
-
-![a screenshot of a Minecraft window where the player is holding two maps, overlaid on the BlueMap that is showing the same area](.github/readme_assets/demo.png)
 
 ## [Click here to download!](../../releases/latest)
 
