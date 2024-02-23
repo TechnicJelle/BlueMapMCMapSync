@@ -27,3 +27,14 @@ You can reload the configs by reloading BlueMap itself, which is `/bluemap reloa
 To get support with this plugin, join the [BlueMap Discord server](https://bluecolo.red/map-discord)
 and ask your questions in [#3rd-party-support](https://discord.com/channels/665868367416131594/863844716047106068).  
 You're welcome to ping me, @TechnicJelle.
+
+# Build instructions
+* Install [Maven](https://maven.apache.org/download.cgi)
+* Clone this repository
+* Run `mvn clean install` in the root directory of the repository
+* The built jar file will be in the `target` directory
+
+### Auto Discover
+*New feature!*  Any time a map is created, it will be automatically discovered and synced with BlueMap.
+
+To opt in to this feature, set `auto-discover` to `true` in the `config.yml` file.

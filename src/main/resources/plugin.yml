@@ -12,3 +12,5 @@ commands:
 permissions:
   bmdiscover:
     default: true
+
+depend: [BlueMap]

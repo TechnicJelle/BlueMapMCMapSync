@@ -84,6 +84,47 @@ public class BMDiscover implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
+	// This method is like the above, but does not require a sender.
+	// It will only be called if auto-discover is enabled in the config.yml file.
+	public void discoverMap(MapView mapView) {
+		if (mapView == null) {
+			return;
+		}
+		World world = mapView.getWorld();
+		if (world == null) {
+			return;
+		}
+		MapView.Scale scale = mapView.getScale();
+		int radius = getRadiusFromScale(scale);
+		if (radius == -1) {
+			return;
+		}
+		BlueMapAPI api = BlueMapAPI.getInstance().orElse(null);
+		if (api == null) {
+			return;
+		}
+		BlueMapWorld blueMapWorld = api.getWorld(world).orElse(null);
+		if (blueMapWorld == null) {
+			return;
+		}
+		if (blueMapWorld.getMaps().isEmpty()) {
+			return;
+		}
+
+		// Discover every BlueMap map of this world
+		for (BlueMapMap map : blueMapWorld.getMaps()) {
+			Square square = new Square(mapView.getCenterX(), mapView.getCenterZ(), radius, map);
+			if (plugin.addSquareToMap(square, map)) {
+				plugin.getLogger().info("Discovered another piece of " + map.getName() + "!");
+				for (Player player : plugin.getServer().getOnlinePlayers()) {
+					player.sendMessage("Another map piece of " + map.getName() + " has been discovered!");
+				}
+			} else {
+				plugin.getLogger().info("This part of " + map.getName() + " has already been discovered");
+			}
+		}
+	}
+
 	/**
 	 * @param scale the scale of the map
 	 * @return the radius of the map. -1 if the scale is not recognized

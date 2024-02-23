@@ -2,6 +2,7 @@ package com.technicjelle.bluemapmcmapsync;
 
 import com.technicjelle.UpdateChecker;
 import com.technicjelle.bluemapmcmapsync.commands.BMDiscover;
+import com.technicjelle.bluemapmcmapsync.PlayerMapHoldListener;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import org.bstats.bukkit.Metrics;
@@ -22,7 +23,16 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 	public static final String CONF_EXT = ".conf";
 	private UpdateChecker updateChecker;
 
+	private Boolean autoDiscover;
+	private BMDiscover executor = new BMDiscover(this);
+	public BMDiscover getExecutor() {
+		return executor;
+	}
+
 	private Map<HashedBlueMapMap, MapData> squaresMap;
+	public Map<HashedBlueMapMap, MapData> getSquaresMap() {
+		return squaresMap;
+	}
 
 	public boolean addSquareToMap(Square square, BlueMapMap map) {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
@@ -38,6 +48,16 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		return success;
 	}
 
+	private void createConfigYmlFile() {
+		getLogger().info("Creating config.yml file");
+		File configFile = new File(getDataFolder(), "config.yml");
+		getConfig().addDefault("auto-discover", false);
+
+		if (!configFile.exists()) {
+			saveResource("config.yml", false);
+		}
+	}
+
 	@Override
 	public void onEnable() {
 		new Metrics(this, 21034);
@@ -49,7 +69,6 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 
 		// Register the command
 		PluginCommand bmDiscover = Bukkit.getPluginCommand("bmdiscover");
-		BMDiscover executor = new BMDiscover(this);
 		if (bmDiscover != null) {
 			bmDiscover.setExecutor(executor);
 			bmDiscover.setTabCompleter(executor);
@@ -65,6 +84,8 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		// First time? Create configs
 		if (getDataFolder().mkdirs()) {
 			getLogger().info("Created plugin config directory");
+
+			createConfigYmlFile();
 
 			for (BlueMapMap map : api.getMaps()) {
 				// Create default empty config for map
@@ -111,6 +132,13 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 	}
 
 	private void loadConfig(BlueMapAPI api, File file) {
+		if (file.getName().equals("config.yml")) {
+			autoDiscover = getConfig().getBoolean("auto-discover");
+			if (autoDiscover) {
+				getServer().getPluginManager().registerEvents(new PlayerMapHoldListener(this), this);
+			}
+		}
+
 		if (!file.getName().endsWith(CONF_EXT)) return; //ignore non-config files
 
 		String mapID = file.getName().substring(0, file.getName().length() - CONF_EXT.length()); //get mapID from filename
