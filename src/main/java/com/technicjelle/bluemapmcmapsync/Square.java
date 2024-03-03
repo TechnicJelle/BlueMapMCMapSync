@@ -26,6 +26,13 @@ public class Square {
 		radius = null;
 	}
 
+	public Square(SquareCreateInfo squareCreateInfo, BlueMapMap map) {
+		this.centerX = squareCreateInfo.getCenter().getX();
+		this.centerZ = squareCreateInfo.getCenter().getY();
+		this.radius = squareCreateInfo.getRadius();
+		init(map);
+	}
+
 	public Square(int centerX, int centerZ, int radius, BlueMapMap map) {
 		this.centerX = centerX;
 		this.centerZ = centerZ;
