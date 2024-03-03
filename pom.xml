@@ -10,6 +10,8 @@
 	<packaging>jar</packaging>
 
 	<name>BlueMapMCMapSync</name>
+	<url>https://github.com/TechnicJelle/BlueMapMCMapSync</url>
+	<description>Allow your players to discover your BlueMap more immersively, by syncing with in-game maps!</description>
 
 	<properties>
 		<java.version>11</java.version>

@@ -2,6 +2,12 @@ name: BlueMapMCMapSync
 version: '${project.version}'
 main: com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync
 api-version: '1.13'
+depend:
+  - BlueMap
+authors:
+  - TechnicJelle
+url: '${project.url}'
+description: '${project.description}'
 
 commands:
   bmdiscover:
