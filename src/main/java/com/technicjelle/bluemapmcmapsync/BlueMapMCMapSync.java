@@ -19,13 +19,19 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public final class BlueMapMCMapSync extends JavaPlugin {
+	public static class MapNotLoadedException extends Exception {
+		private MapNotLoadedException() {
+			super();
+		}
+	}
 	public static final String CONF_EXT = ".conf";
 	private UpdateChecker updateChecker;
 
 	private Map<HashedBlueMapMap, MapData> squaresMap;
 
-	public boolean addSquareToMap(Square square, BlueMapMap map) {
+	public boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
+		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotLoadedException(); //map not being tracked by this plugin
 		MapData mapData = squaresMap.get(hashedBMMap);
 		if (mapData.isDebugMode()) {
 			getLogger().info("Debug Mode is enabled, adding debug marker: " + square.toString());

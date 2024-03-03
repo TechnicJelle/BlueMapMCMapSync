@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.technicjelle.bluemapmcmapsync.SquareCreateInfo.SquareCreateException;
+import static com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync.MapNotLoadedException;
 
 public class BMDiscover implements CommandExecutor, TabCompleter {
 	private final BlueMapMCMapSync plugin;
@@ -36,10 +37,14 @@ public class BMDiscover implements CommandExecutor, TabCompleter {
 		// Discover every BlueMap map of this world
 		for (BlueMapMap map : squareCreateInfo.getBlueMapWorld().getMaps()) {
 			Square square = new Square(squareCreateInfo, map);
-			if (plugin.addSquareToMap(square, map)) {
-				sender.sendMessage("Discovered another piece of " + map.getName() + "!");
-			} else {
-				sender.sendMessage("This part of " + map.getName() + " has already been discovered");
+			try {
+				if (plugin.addSquareToMap(square, map)) {
+					sender.sendMessage("Discovered another piece of " + map.getName() + "!");
+				} else {
+					sender.sendMessage("This part of " + map.getName() + " has already been discovered");
+				}
+			} catch (MapNotLoadedException ignored) {
+				// This map is not being tracked by this plugin
 			}
 		}
 		return true;
