@@ -59,6 +59,7 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 	}
 
 	final Consumer<BlueMapAPI> onEnableListener = api -> {
+		boolean shouldRenderManagerStartAgain = api.getRenderManager().isRunning();
 		api.getRenderManager().stop(); //do not render anything yet, until the squares are loaded
 		updateChecker.logUpdateMessage(getLogger());
 
@@ -77,7 +78,8 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		loadConfigs(api);
 
 		setupTileFilters();
-		api.getRenderManager().start(); //the squares have been loaded and the tile filters have been set up, we may start rendering now
+		if (shouldRenderManagerStartAgain)
+			api.getRenderManager().start(); //the squares have been loaded and the tile filters have been set up, we may start rendering now
 	};
 
 	private void setupTileFilters() {
