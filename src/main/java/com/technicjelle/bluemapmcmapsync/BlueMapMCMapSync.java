@@ -76,8 +76,8 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 
 		loadConfigs(api);
 
-		api.getRenderManager().start(); //the squares have been loaded, we may start rendering now
 		setupTileFilters();
+		api.getRenderManager().start(); //the squares have been loaded and the tile filters have been set up, we may start rendering now
 	};
 
 	private void setupTileFilters() {
