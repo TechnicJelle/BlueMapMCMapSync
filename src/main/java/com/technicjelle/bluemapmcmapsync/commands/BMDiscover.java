@@ -1,9 +1,6 @@
 package com.technicjelle.bluemapmcmapsync.commands;
 
 import com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync;
-import com.technicjelle.bluemapmcmapsync.Square;
-import com.technicjelle.bluemapmcmapsync.SquareCreateInfo;
-import de.bluecolored.bluemap.api.BlueMapMap;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,9 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import static com.technicjelle.bluemapmcmapsync.SquareCreateInfo.SquareCreateException;
-import static com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync.MapNotLoadedException;
 
 public class BMDiscover implements CommandExecutor, TabCompleter {
 	private final BlueMapMCMapSync plugin;
@@ -48,27 +42,8 @@ public class BMDiscover implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.RED + "This map does not exist on the server.");
 			return true;
 		}
-		SquareCreateInfo squareCreateInfo;
-		try {
-			squareCreateInfo = new SquareCreateInfo(mapView);
-		} catch (SquareCreateException e) {
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-			return true;
-		}
 
-		// Discover every BlueMap map of this world
-		for (BlueMapMap map : squareCreateInfo.getBlueMapWorld().getMaps()) {
-			Square square = new Square(squareCreateInfo, map);
-			try {
-				if (plugin.addSquareToMap(square, map)) {
-					sender.sendMessage("Discovered another piece of " + map.getName() + "!");
-				} else {
-					sender.sendMessage("This part of " + map.getName() + " has already been discovered");
-				}
-			} catch (MapNotLoadedException ignored) {
-				// This map is not being tracked by this plugin
-			}
-		}
+		plugin.discoverMapView(player, mapView);
 		return true;
 	}
 

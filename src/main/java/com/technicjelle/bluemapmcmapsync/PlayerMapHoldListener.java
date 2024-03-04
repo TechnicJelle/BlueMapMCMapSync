@@ -1,7 +1,5 @@
 package com.technicjelle.bluemapmcmapsync;
 
-import com.technicjelle.bluemapmcmapsync.SquareCreateInfo.SquareCreateException;
-import de.bluecolored.bluemap.api.BlueMapMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -62,26 +60,6 @@ public class PlayerMapHoldListener implements Listener {
 			return;
 		}
 
-		SquareCreateInfo squareCreateInfo;
-		try {
-			squareCreateInfo = new SquareCreateInfo(highestMapView);
-		} catch (SquareCreateException e) {
-			player.sendMessage(ChatColor.RED + e.getMessage());
-			return;
-		}
-
-		// Discover every BlueMap map of this world
-		for (BlueMapMap map : squareCreateInfo.getBlueMapWorld().getMaps()) {
-			Square square = new Square(squareCreateInfo, map);
-			try {
-				if (plugin.addSquareToMap(square, map)) {
-					player.sendMessage("Discovered another piece of " + map.getName() + "!");
-				} else {
-					player.sendMessage("This part of " + map.getName() + " has already been discovered");
-				}
-			} catch (BlueMapMCMapSync.MapNotLoadedException ignored) {
-				// This map is not being tracked by this plugin
-			}
-		}
+		plugin.discoverMapView(player, highestMapView);
 	}
 }

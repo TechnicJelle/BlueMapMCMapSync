@@ -6,6 +6,7 @@ import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
+import org.bukkit.map.MapView;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.Objects;
@@ -14,6 +15,12 @@ import static com.technicjelle.bluemapmcmapsync.Config.MARKER_SET_ID;
 
 @ConfigSerializable
 public class Square {
+	public static class SquareCreateException extends Exception {
+		private SquareCreateException(String message) {
+			super(message);
+		}
+	}
+
 	private final Integer centerX;
 	private final Integer centerZ;
 	private final Integer radius;
@@ -28,10 +35,15 @@ public class Square {
 		radius = null;
 	}
 
-	public Square(SquareCreateInfo squareCreateInfo, BlueMapMap map) {
-		this.centerX = squareCreateInfo.getCenter().getX();
-		this.centerZ = squareCreateInfo.getCenter().getY();
-		this.radius = squareCreateInfo.getRadius();
+	public Square(MapView mapView, BlueMapMap map) throws SquareCreateException {
+		this.centerX = mapView.getCenterX();
+		this.centerZ = mapView.getCenterZ();
+
+		MapView.Scale scale = mapView.getScale();
+		this.radius = getRadiusFromScale(scale);
+		if (radius == -1) {
+			throw new SquareCreateException("Map's scale is not recognized.");
+		}
 		init(map);
 	}
 
@@ -96,5 +108,26 @@ public class Square {
 	@Override
 	public int hashCode() {
 		return Objects.hash(centerX, centerZ, radius);
+	}
+
+	/**
+	 * @param scale the scale of the map
+	 * @return the radius of the map. -1 if the scale is not recognized
+	 */
+	private static int getRadiusFromScale(MapView.Scale scale) {
+		switch (scale) {
+			case CLOSEST:
+				return 64;
+			case CLOSE:
+				return 128;
+			case NORMAL:
+				return 256;
+			case FAR:
+				return 512;
+			case FARTHEST:
+				return 1024;
+			default:
+				return -1;
+		}
 	}
 }

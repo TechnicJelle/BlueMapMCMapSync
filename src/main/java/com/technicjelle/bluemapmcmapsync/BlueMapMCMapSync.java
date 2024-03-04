@@ -4,10 +4,15 @@ import com.technicjelle.UpdateChecker;
 import com.technicjelle.bluemapmcmapsync.commands.BMDiscover;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
+import de.bluecolored.bluemap.api.BlueMapWorld;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.map.MapView;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
@@ -34,7 +39,45 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 	private Config config;
 	private PlayerMapHoldListener playerMapHoldListener;
 
-	public boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
+	public void discoverMapView(Player player, MapView mapView) {
+		World world = mapView.getWorld();
+		if (world == null) {
+			player.sendMessage(ChatColor.RED + "The world this map is associated with is not loaded.");
+			return;
+		}
+		BlueMapAPI api = BlueMapAPI.getInstance().orElse(null);
+		if (api == null) {
+			player.sendMessage(ChatColor.RED + "BlueMap is not loaded. Try again later.");
+			return;
+		}
+		BlueMapWorld blueMapWorld = api.getWorld(world).orElse(null);
+		if (blueMapWorld == null) {
+			player.sendMessage(ChatColor.RED + "Cannot find the BlueMapWorld of this Bukkit World.");
+			return;
+		}
+		if (blueMapWorld.getMaps().isEmpty()) {
+			player.sendMessage(ChatColor.RED + "No maps found for this world.");
+			return;
+		}
+
+		// Discover every BlueMap map of this world
+		for (BlueMapMap map : blueMapWorld.getMaps()) {
+			try {
+				Square square = new Square(mapView, map);
+				if (addSquareToMap(square, map)) {
+					player.sendMessage("Discovered another piece of " + map.getName() + "!");
+				} else {
+					player.sendMessage("This part of " + map.getName() + " has already been discovered");
+				}
+			} catch (MapNotLoadedException ignored) {
+				// This map is not being tracked by this plugin
+			} catch (Square.SquareCreateException e) {
+				player.sendMessage(ChatColor.RED + e.getMessage());
+			}
+		}
+	}
+
+	private boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
 		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotLoadedException(); //map not being tracked by this plugin
 		MapData mapData = squaresMap.get(hashedBMMap);
