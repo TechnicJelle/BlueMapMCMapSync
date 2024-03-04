@@ -25,8 +25,8 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public final class BlueMapMCMapSync extends JavaPlugin {
-	public static class MapNotLoadedException extends Exception {
-		private MapNotLoadedException() {
+	public static class MapNotTrackedException extends Exception {
+		private MapNotTrackedException() {
 			super();
 		}
 	}
@@ -69,7 +69,7 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 				} else {
 					player.sendMessage("This part of " + map.getName() + " has already been discovered");
 				}
-			} catch (MapNotLoadedException ignored) {
+			} catch (MapNotTrackedException ignored) {
 				// This map is not being tracked by this plugin
 			} catch (Square.SquareCreateException e) {
 				player.sendMessage(ChatColor.RED + e.getMessage());
@@ -77,9 +77,9 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		}
 	}
 
-	private boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
+	private boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotTrackedException {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
-		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotLoadedException(); //map not being tracked by this plugin
+		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotTrackedException(); //map not being tracked by this plugin
 		MapData mapData = squaresMap.get(hashedBMMap);
 		boolean success = mapData.getSquares().add(square);
 		mapData.save(this, map.getId());
