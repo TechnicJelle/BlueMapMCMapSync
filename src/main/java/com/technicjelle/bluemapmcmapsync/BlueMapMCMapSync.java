@@ -33,12 +33,13 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
 		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotLoadedException(); //map not being tracked by this plugin
 		MapData mapData = squaresMap.get(hashedBMMap);
-		if (mapData.isDebugMode()) {
+		boolean success = mapData.getSquares().add(square);
+		mapData.save(this, map.getId());
+
+		if (mapData.isDebugMode() && success) {
 			getLogger().info("Debug Mode is enabled, adding debug marker: " + square.toString());
 			square.addDebugMarkerToBlueMapMap(map);
 		}
-		boolean success = mapData.getSquares().add(square);
-		mapData.save(this, map.getId());
 
 		setupTileFilters();
 		return success;
