@@ -7,6 +7,7 @@ import de.bluecolored.bluemap.api.BlueMapMap;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
@@ -28,6 +29,10 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 	private UpdateChecker updateChecker;
 
 	private Map<HashedBlueMapMap, MapData> squaresMap;
+
+	@SuppressWarnings("FieldCanBeLocal")
+	private Config config;
+	private PlayerMapHoldListener playerMapHoldListener;
 
 	public boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
 		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
@@ -53,6 +58,7 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		updateChecker.checkAsync();
 
 		BlueMapAPI.onEnable(onEnableListener);
+		BlueMapAPI.onDisable(onDisableListener);
 
 		// Register the command
 		PluginCommand bmDiscover = Bukkit.getPluginCommand("bmdiscover");
@@ -87,6 +93,20 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		setupTileFilters();
 		if (shouldRenderManagerStartAgain)
 			api.getRenderManager().start(); //the squares have been loaded and the tile filters have been set up, we may start rendering now
+
+		config = new Config(this);
+
+		if (config.isAutomaticMapDiscovery()) {
+			playerMapHoldListener = new PlayerMapHoldListener(this);
+			getServer().getPluginManager().registerEvents(playerMapHoldListener, this);
+		}
+	};
+
+	final Consumer<BlueMapAPI> onDisableListener = api -> {
+		if (playerMapHoldListener != null) {
+			HandlerList.unregisterAll(playerMapHoldListener);
+			playerMapHoldListener = null;
+		}
 	};
 
 	private void setupTileFilters() {

@@ -4,11 +4,6 @@ import com.flowpowered.math.vector.Vector2i;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapWorld;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 public class SquareCreateInfo {
@@ -21,25 +16,6 @@ public class SquareCreateInfo {
 	final BlueMapWorld blueMapWorld;
 	final Vector2i center;
 	final int radius;
-
-	public static SquareCreateInfo fromCommand(CommandSender sender) throws SquareCreateException {
-		if (!(sender instanceof Player)) {
-			throw new SquareCreateException("You must be a player to use this command.");
-		}
-		Player player = (Player) sender;
-		ItemStack heldItem = player.getInventory().getItemInMainHand();
-		ItemMeta meta = heldItem.getItemMeta();
-		if (!(meta instanceof MapMeta)) {
-			throw new SquareCreateException("You must be holding a map in your main hand to sync it");
-		}
-		MapMeta mapMeta = (MapMeta) meta;
-		MapView mapView = mapMeta.getMapView();
-		if (mapView == null) {
-			throw new SquareCreateException("This map does not exist on the server.");
-		}
-
-		return new SquareCreateInfo(mapView);
-	}
 
 	public SquareCreateInfo(MapView mapView) throws SquareCreateException {
 		World world = mapView.getWorld();

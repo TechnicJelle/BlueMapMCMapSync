@@ -10,6 +10,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.Objects;
 
+import static com.technicjelle.bluemapmcmapsync.Config.MARKER_SET_ID;
+
 @ConfigSerializable
 public class Square {
 	private final Integer centerX;
@@ -30,13 +32,6 @@ public class Square {
 		this.centerX = squareCreateInfo.getCenter().getX();
 		this.centerZ = squareCreateInfo.getCenter().getY();
 		this.radius = squareCreateInfo.getRadius();
-		init(map);
-	}
-
-	public Square(int centerX, int centerZ, int radius, BlueMapMap map) {
-		this.centerX = centerX;
-		this.centerZ = centerZ;
-		this.radius = radius;
 		init(map);
 	}
 
@@ -68,9 +63,8 @@ public class Square {
 	}
 
 	public void addDebugMarkerToBlueMapMap(BlueMapMap map) {
-		String key = "MC Map Sync Debug Overlay";
-		MarkerSet markerSet = map.getMarkerSets().computeIfAbsent(key, id -> MarkerSet.builder()
-				.label(key)
+		MarkerSet markerSet = map.getMarkerSets().computeIfAbsent(MARKER_SET_ID, id -> MarkerSet.builder()
+				.label(MARKER_SET_ID)
 				.toggleable(true)
 				.defaultHidden(true)
 				.build());
