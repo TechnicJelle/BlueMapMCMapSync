@@ -1,5 +1,6 @@
-package com.technicjelle.bluemapmcmapsync;
+package com.technicjelle.bluemapmcmapsync.triggers;
 
+import com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

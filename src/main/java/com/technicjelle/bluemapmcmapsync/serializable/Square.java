@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapmcmapsync;
+package com.technicjelle.bluemapmcmapsync.serializable;
 
 import com.flowpowered.math.vector.Vector2i;
 import de.bluecolored.bluemap.api.BlueMapMap;
