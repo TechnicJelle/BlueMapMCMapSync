@@ -1,24 +1,23 @@
-package com.technicjelle.bluemapmcmapsync;
+package com.technicjelle.bluemapmcmapsync.serializable;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
-import static com.technicjelle.bluemapmcmapsync.BlueMapMCMapSync.CONF_EXT;
+import static com.technicjelle.bluemapmcmapsync.CoreData.CONF_EXT;
 
 @ConfigSerializable
-public class MapData {
+public class MapExplorationData {
 	private final boolean debugMode;
 	private final Set<Square> squares;
 
-	public MapData() {
+	public MapExplorationData() {
 		this.debugMode = false;
 		this.squares = new HashSet<>();
 	}
@@ -31,19 +30,15 @@ public class MapData {
 		return squares;
 	}
 
-	public void save(JavaPlugin plugin, String mapID) {
-		Path mapConfigPath = plugin.getDataFolder().toPath().resolve(mapID + CONF_EXT);
+	public void save(File dataFolder, String mapID) throws ConfigurateException {
+		Path mapConfigPath = dataFolder.toPath().resolve(mapID + CONF_EXT);
 		HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
 				.prettyPrinting(true)
 				.path(mapConfigPath)
 				.build();
 
-		try {
-			CommentedConfigurationNode root = loader.createNode();
-			root.set(this);
-			loader.save(root);
-		} catch (IOException e) {
-			plugin.getLogger().log(Level.SEVERE, "Failed to save config for map: " + mapID, e);
-		}
+		CommentedConfigurationNode root = loader.createNode();
+		root.set(this);
+		loader.save(root);
 	}
 }

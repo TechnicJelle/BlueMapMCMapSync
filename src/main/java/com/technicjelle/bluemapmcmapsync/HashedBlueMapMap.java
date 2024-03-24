@@ -3,6 +3,8 @@ package com.technicjelle.bluemapmcmapsync;
 import de.bluecolored.bluemap.api.BlueMapMap;
 
 public class HashedBlueMapMap {
+	//TODO: Replace with BlueMap's own BlueMapMap again,
+	// once https://github.com/BlueMap-Minecraft/BlueMap/commit/757979b7b4635fda4bd0ae9837b103e5bde33cb6 is released
 	private final BlueMapMap map;
 
 	public HashedBlueMapMap(BlueMapMap map) {
