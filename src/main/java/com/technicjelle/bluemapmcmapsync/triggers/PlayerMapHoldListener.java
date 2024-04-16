@@ -14,6 +14,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
+/// Because the default MapInitializeEvent doesn't provide a reference to the player who created it,
+///  I have to use the more generic PlayerInteractEvent, to catch when a map is created.
+/// Then, I do some insane amount of filtering and looping through the player's inventory,
+///  to find the newest map in their inventory.
 public class PlayerMapHoldListener implements Listener {
 	private final BlueMapMCMapSync plugin;
 
