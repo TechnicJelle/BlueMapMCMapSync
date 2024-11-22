@@ -23,16 +23,14 @@ public class SquareCreateInfo {
 	final int radius;
 
 	public static SquareCreateInfo fromCommand(CommandSender sender) throws SquareCreateException {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player player)) {
 			throw new SquareCreateException("You must be a player to use this command.");
 		}
-		Player player = (Player) sender;
 		ItemStack heldItem = player.getInventory().getItemInMainHand();
 		ItemMeta meta = heldItem.getItemMeta();
-		if (!(meta instanceof MapMeta)) {
+		if (!(meta instanceof MapMeta mapMeta)) {
 			throw new SquareCreateException("You must be holding a map in your main hand to sync it");
 		}
-		MapMeta mapMeta = (MapMeta) meta;
 		MapView mapView = mapMeta.getMapView();
 		if (mapView == null) {
 			throw new SquareCreateException("This map does not exist on the server.");
@@ -80,22 +78,16 @@ public class SquareCreateInfo {
 
 	/**
 	 * @param scale the scale of the map
-	 * @return the radius of the map. -1 if the scale is not recognized
+	 * @return the radius of the map. -1 if the scale is not recognised
 	 */
 	private static int getRadiusFromScale(MapView.Scale scale) {
-		switch (scale) {
-			case CLOSEST:
-				return 64;
-			case CLOSE:
-				return 128;
-			case NORMAL:
-				return 256;
-			case FAR:
-				return 512;
-			case FARTHEST:
-				return 1024;
-			default:
-				return -1;
-		}
+		return switch (scale) {
+			case CLOSEST -> 64;
+			case CLOSE -> 128;
+			case NORMAL -> 256;
+			case FAR -> 512;
+			case FARTHEST -> 1024;
+			default -> -1;
+		};
 	}
 }

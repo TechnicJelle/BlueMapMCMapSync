@@ -24,15 +24,15 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 			super();
 		}
 	}
+
 	public static final String CONF_EXT = ".conf";
 	private UpdateChecker updateChecker;
 
-	private Map<HashedBlueMapMap, MapData> squaresMap;
+	private Map<BlueMapMap, MapData> squaresMap;
 
 	public boolean addSquareToMap(Square square, BlueMapMap map) throws MapNotLoadedException {
-		HashedBlueMapMap hashedBMMap = new HashedBlueMapMap(map);
-		if (!squaresMap.containsKey(hashedBMMap)) throw new MapNotLoadedException(); //map not being tracked by this plugin
-		MapData mapData = squaresMap.get(hashedBMMap);
+		if (!squaresMap.containsKey(map)) throw new MapNotLoadedException(); //map not being tracked by this plugin
+		MapData mapData = squaresMap.get(map);
 		boolean success = mapData.getSquares().add(square);
 		mapData.save(this, map.getId());
 
@@ -85,14 +85,16 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 		loadConfigs(api);
 
 		setupTileFilters();
-		if (shouldRenderManagerStartAgain)
-			api.getRenderManager().start(); //the squares have been loaded and the tile filters have been set up, we may start rendering now
+		if (shouldRenderManagerStartAgain) {
+			//the squares have been loaded, and the tile filters have been set up, so we may start rendering now
+			api.getRenderManager().start();
+		}
 	};
 
 	private void setupTileFilters() {
 		// Set tile filters and add debug markers
-		for (Map.Entry<HashedBlueMapMap, MapData> entry : squaresMap.entrySet()) {
-			BlueMapMap map = entry.getKey().getMap();
+		for (Map.Entry<BlueMapMap, MapData> entry : squaresMap.entrySet()) {
+			BlueMapMap map = entry.getKey();
 			Set<Square> squares = entry.getValue().getSquares();
 
 			map.setTileFilter(tilePos -> {
@@ -148,7 +150,7 @@ public final class BlueMapMCMapSync extends JavaPlugin {
 			return;
 		}
 
-		squaresMap.put(new HashedBlueMapMap(map), mapData);
+		squaresMap.put(map, mapData);
 		for (Square square : mapData.getSquares()) {
 			if (!square.isValid()) {
 				getLogger().severe("Invalid square found in config for map " + map.getId());

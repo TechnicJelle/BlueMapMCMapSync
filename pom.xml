@@ -6,7 +6,7 @@
 
 	<groupId>com.technicjelle</groupId>
 	<artifactId>BlueMapMCMapSync</artifactId>
-	<version>0.1</version>
+	<version>0.2-BETA</version>
 	<packaging>jar</packaging>
 
 	<name>BlueMapMCMapSync</name>
@@ -14,7 +14,7 @@
 	<description>Allow your players to discover your BlueMap more immersively, by syncing with in-game maps!</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -23,7 +23,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.13.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -32,12 +32,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.6.0</version>
 				<configuration>
 					<relocations>
 						<relocation>
+							<pattern>com.technicjelle.UpdateChecker</pattern>
+							<shadedPattern>${project.groupId}.bluemapmcmapsync.shadow.UpdateChecker</shadedPattern>
+						</relocation>
+						<relocation>
 							<pattern>org.bstats</pattern>
-							<shadedPattern>com.technicjelle.bluemapmcmapsync.bstats</shadedPattern>
+							<shadedPattern>${project.groupId}.bluemapmcmapsync.shadow.bstats</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>org.spongepowered.configurate</pattern>
+							<shadedPattern>${project.groupId}.bluemapmcmapsync.shadow.configurate</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
@@ -70,6 +78,13 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+					<include>**/*.yml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 	</build>
@@ -80,12 +95,13 @@
 			<url>https://repo.papermc.io/repository/maven-public/</url>
 		</repository>
 		<repository>
-			<id>sonatype</id>
-			<url>https://oss.sonatype.org/content/groups/public/</url>
+			<id>spongepowered</id>
+			<url>https://repo.spongepowered.org/maven/</url>
 		</repository>
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
+			<id>bluecolored-releases</id>
+			<name>BlueColored Repository</name>
+			<url>https://repo.bluecolored.de/releases</url>
 		</repository>
 	</repositories>
 
@@ -103,32 +119,27 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.TechnicJelle</groupId>
-			<artifactId>MCUtils</artifactId>
-			<version>v1.0</version>
+			<groupId>com.technicjelle</groupId>
+			<artifactId>UpdateChecker</artifactId>
+			<version>2.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.TechnicJelle</groupId>
-			<artifactId>UpdateCheckerJava</artifactId>
-			<version>v2.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.BlueMap-Minecraft</groupId>
-			<artifactId>BlueMapAPI</artifactId>
-			<version>v2.6.1</version>
+			<groupId>de.bluecolored</groupId>
+			<artifactId>bluemap-api</artifactId>
+			<version>2.7.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spongepowered</groupId>
 			<artifactId>configurate-hocon</artifactId>
-			<version>4.1.2</version>
+			<version>4.2.0-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>3.0.2</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
